@@ -12,8 +12,10 @@ export function parsePostData(ctx) {
             });
             ctx.req.addListener("end", function () {
                 let parseData = parseQueryStr(postdata);
-                for (let key in parseData) {
-                    resolve(JSON.parse(key));
+                try {
+                    resolve(JSON.parse(parseData[0]));
+                } catch (e) {
+                    reject(e);
                 }
             })
         } catch (err) {
@@ -24,13 +26,13 @@ export function parsePostData(ctx) {
 
 // 将POST请求参数字符串解析成JSON
 export function parseQueryStr(queryStr) {
-    let queryData = {};
-    let queryStrList = queryStr.split('&');
-    for (let [index, queryStr] of queryStrList.entries()) {
-        let itemList = queryStr.split('=');
-        queryData[itemList[0]] = decodeURIComponent(itemList[1])
-    }
-    return queryData
+    // let queryData = {};
+    // let queryStrList = queryStr.split('&');
+    // for (let [index, queryStr] of queryStrList.entries()) {
+    //     let itemList = queryStr.split('=');
+    //     queryData[itemList[0]] = decodeURIComponent(itemList[1])
+    // }
+    return queryStr.split('&')
 }
 
 //获取文章列表数据
@@ -49,8 +51,7 @@ export const insertDocs = (sql) => {
             if (error) reject(error);
             resolve({
                 status: 200,
-                success: true,
-                id: results.insertId
+                success: true
             });
         });
     })
@@ -58,6 +59,52 @@ export const insertDocs = (sql) => {
 
 //获取文章详情数据
 export const queryDocsDetail = (sql) => {
+    return new Promise((resolve, reject) => {
+        pool.query(sql, function (error, results, fields) {
+            if (error) reject(error);
+            resolve(results);
+        });
+    })
+};
+
+//搜索文章
+export const searchDocs = (sql) => {
+    return new Promise((resolve, reject) => {
+        pool.query(sql, function (error, results, fields) {
+            if (error) reject(error);
+            resolve(results);
+        });
+    })
+};
+
+//更新指定文章数据
+export const updateDocs = (sql) => {
+    return new Promise((resolve, reject) => {
+        pool.query(sql, function (error, results, fields) {
+            if (error) reject(error);
+            resolve({
+                status: 200,
+                success: true
+            });
+        });
+    })
+};
+
+//插入指定文章id的评论数据
+export const insertDocsComment = (sql) => {
+    return new Promise((resolve, reject) => {
+        pool.query(sql, function (error, results, fields) {
+            if (error) reject(error);
+            resolve({
+                status: 200,
+                success: true
+            });
+        });
+    })
+};
+
+//获取指定文章id的评论数据
+export const getDocsComment = (sql) => {
     return new Promise((resolve, reject) => {
         pool.query(sql, function (error, results, fields) {
             if (error) reject(error);
