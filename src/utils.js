@@ -51,7 +51,8 @@ export const insertDocs = (sql) => {
             if (error) reject(error);
             resolve({
                 status: 200,
-                success: true
+                success: true,
+                id: results.insertId
             });
         });
     })
